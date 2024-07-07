@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	s := ""
+	s := "create table Map\n(\n    id       int            null,\n    province varchar(255)   null,\n    lng      decimal(10, 6) null,\n    lat      decimal(10, 6) null\n);"
 	table, err := ddl.Parse(s)
 	fmt.Println(table, err)
 }
