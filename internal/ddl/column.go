@@ -3,6 +3,7 @@ package ddl
 import (
 	"github.com/pingcap/tidb/pkg/parser/ast"
 	"github.com/pingcap/tidb/pkg/parser/format"
+	"github.com/pingcap/tidb/pkg/parser/test_driver"
 	"github.com/pingcap/tidb/pkg/parser/types"
 	"strings"
 )
@@ -10,7 +11,7 @@ import (
 type Column struct {
 	Type    string
 	Null    bool
-	Default string
+	Default any
 	Name    string
 	Comment string
 	Len     int
@@ -27,6 +28,20 @@ func (c *Column) Parse(def *ast.ColumnDef) {
 	c.Type = types.TypeStr(def.Tp.GetType())
 	c.Name = def.Name.String()
 	c.Len = def.Tp.GetFlen()
+	for _, item := range def.Options {
+		switch item.Tp {
+		case ast.ColumnOptionDefaultValue: //默认值
+			if val, ok := item.Expr.(*test_driver.ValueExpr); ok {
+				c.Default = val.Datum.GetValue()
+			}
+		case ast.ColumnOptionNull:
+			c.Null = true
+		case ast.ColumnOptionComment:
+			if val, ok := item.Expr.(*test_driver.ValueExpr); ok {
+				c.Comment = val.Datum.GetString()
+			}
+		}
+	}
 
 	var sb strings.Builder
 	ctx := format.NewRestoreCtx(format.DefaultRestoreFlags, &sb)

@@ -1,0 +1,5 @@
+
+// {{ pascalCase .TableName }} {{.Comment}}
+type {{ pascalCase .TableName }} struct {
+
+}
