@@ -1,4 +1,4 @@
-package ddl
+package core
 
 import (
 	"github.com/pingcap/tidb/pkg/parser/ast"

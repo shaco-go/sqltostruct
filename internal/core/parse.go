@@ -1,4 +1,4 @@
-package ddl
+package core
 
 import (
 	"fmt"
@@ -12,6 +12,9 @@ func Parse(sql string) (*Table, error) {
 	stmt, _, err := p.ParseSQL(sql)
 	if err != nil {
 		return nil, err
+	}
+	if len(stmt) == 0 {
+		return nil, errors.New("sql parse fail")
 	}
 	dom := stmt[0]
 	var table Table

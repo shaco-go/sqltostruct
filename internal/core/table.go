@@ -1,13 +1,7 @@
-package ddl
+package core
 
 import (
-	"fmt"
 	"github.com/pingcap/tidb/pkg/parser/ast"
-	"github.com/samber/lo"
-	"go/format"
-	"path/filepath"
-	"strings"
-	"text/template"
 )
 
 type Table struct {
@@ -36,22 +30,4 @@ func (t *Table) Enter(in ast.Node) (ast.Node, bool) {
 
 func (t *Table) Leave(in ast.Node) (ast.Node, bool) {
 	return in, true
-}
-
-func (t *Table) Template(filePath string) {
-	files, err := template.New(filepath.Base(filePath)).Funcs(map[string]any{
-		"pascalCase": lo.PascalCase,
-	}).ParseFiles(filePath)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	var builder strings.Builder
-	err = files.Execute(&builder, t)
-	source, _ := format.Source([]byte(builder.String()))
-	fmt.Println(string(source))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 }
