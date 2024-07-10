@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/pingcap/tidb/pkg/parser/ast"
 	"github.com/samber/lo"
-	"os"
+	"go/format"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -45,7 +46,10 @@ func (t *Table) Template(filePath string) {
 		fmt.Println(err)
 		return
 	}
-	err = files.Execute(os.Stdout, t)
+	var builder strings.Builder
+	err = files.Execute(&builder, t)
+	source, _ := format.Source([]byte(builder.String()))
+	fmt.Println(string(source))
 	if err != nil {
 		fmt.Println(err)
 		return

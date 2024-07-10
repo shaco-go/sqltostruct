@@ -1,5 +1,6 @@
-
 // {{ pascalCase .TableName }} {{.Comment}}
 type {{ pascalCase .TableName }} struct {
-
+    {{- range .Columns }}
+    {{ pascalCase .Name}} {{ .Type }} `gorm:"column:{{- .Name -}}"`
+    {{- end }}
 }
