@@ -24,6 +24,7 @@ var f embed.FS
 
 func main() {
 	port := flag.String("p", "7788", "port to listen on")
+	flag.Parse()
 	// init db
 	global.DB = initialization.NewGorm()
 
