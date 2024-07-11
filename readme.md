@@ -6,7 +6,7 @@
 * 可自定义tag,配置对应的字段映射,包括null类型
 
 ## 截图
-![图片](https://imgur.com/a/ldofSY6)
+![图片](https://i.imgur.com/N5u9w1C.png)
 
 ## 下载
 [https://github.com/shaco-go/sqltostruct/releases](https://github.com/shaco-go/sqltostruct/releases)
