@@ -9,3 +9,10 @@
 ![图片](https://imgur.com/a/ldofSY6)
 
 ## 下载
+[https://github.com/shaco-go/sqltostruct/releases](https://github.com/shaco-go/sqltostruct/releases)
+
+## 注意
+默认端口7788,如果端口被占用`-p`来制定端口
+```shell
+.\sqltostruct.exe -p 8888
+```
