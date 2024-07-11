@@ -60,8 +60,15 @@ func main() {
 			response.Ok(c)
 		})
 		api.POST("generate", func(c *gin.Context) {
-			sql := c.PostForm("sql")
-			t, err := core.NewTemplate(sql)
+			var req struct {
+				Sql string `json:"sql"`
+			}
+			err := c.ShouldBind(&req)
+			if err != nil {
+				response.FailWithMessage(err.Error(), c)
+				return
+			}
+			t, err := core.NewTemplate(req.Sql)
 			if err != nil {
 				response.FailWithMessage(err.Error(), c)
 				return

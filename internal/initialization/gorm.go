@@ -1,8 +1,8 @@
 package initialization
 
 import (
+	"github.com/glebarez/sqlite"
 	"github.com/shaco-go/sqltostruct/internal/model"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 

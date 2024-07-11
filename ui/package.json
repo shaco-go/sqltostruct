@@ -12,7 +12,8 @@
     "axios": "^1.7.2",
     "highlight.js": "^11.10.0",
     "qs": "^6.12.3",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vue-clipboard3": "^2.0.0"
   },
   "devDependencies": {
     "@vicons/ionicons5": "^0.12.0",
