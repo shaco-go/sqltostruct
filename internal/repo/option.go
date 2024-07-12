@@ -34,20 +34,19 @@ func (o Option) Get() *model.Option {
 func (o Option) Save(req request.OptionSaveReq) error {
 	var tag = make(datatypes.JSONMap)
 	_ = tag.UnmarshalJSON([]byte(req.Tag))
-	data := &model.Option{
-		IsNull:        req.IsNull,
-		IsDefault:     req.IsDefault,
-		IsUnsigned:    req.IsUnsigned,
-		IsLen:         req.IsLen,
-		IsComment:     req.IsComment,
-		Style:         req.Style,
-		ColumnMap:     o.toUpper(req.ColumnMap),
-		ColumnNullMap: o.toUpper(req.ColumnNullMap),
-		Tag:           tag,
-	}
-	var info = o.Get()
-	return global.DB.Model(&info).Select("IsNull", "IsDefault", "IsNegative", "IsLen", "IsComment", "Style", "ColumnMap",
-		"ColumnNullMap").
+	data := o.Get()
+	data.IsNull = req.IsNull
+	data.IsDefault = req.IsDefault
+	data.IsUnsigned = req.IsUnsigned
+	data.IsLen = req.IsLen
+	data.IsComment = req.IsComment
+	data.Style = req.Style
+	data.IsGorm = req.IsGorm
+	data.ColumnMap = o.toUpper(req.ColumnMap)
+	data.ColumnNullMap = o.toUpper(req.ColumnNullMap)
+	data.Tag = tag
+	return global.DB.
+		Select("*").
 		Updates(data).Error
 }
 
