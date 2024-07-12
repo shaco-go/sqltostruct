@@ -9,6 +9,7 @@ import (
 	"github.com/shaco-go/sqltostruct/internal/repo"
 	"github.com/spf13/cast"
 	"go/format"
+	"sort"
 	"strings"
 	"text/template"
 )
@@ -55,11 +56,21 @@ func (t *Template) getColumnByStyle(column string) string {
 }
 
 func (t *Template) build() {
+	// tag顺序
+	var tagField []string
+	for field, ok := range t.Option.Tag {
+		if cast.ToBool(ok) {
+			tagField = append(tagField, field)
+		}
+	}
+	sort.Slice(tagField, func(i, j int) bool {
+		return i < j
+	})
 	for _, item := range t.Table.Columns {
 		var text = lo.PascalCase(item.Name) + " "
 		// 类型
 		var typeStr = "any"
-		if t.Option.IsNull {
+		if t.Option.IsNull && item.Null {
 			if val, ok := t.Option.ColumnNullMap[strings.ToUpper(item.Type)]; ok {
 				typeStr = cast.ToString(val)
 			}
@@ -70,11 +81,9 @@ func (t *Template) build() {
 		}
 		text += typeStr
 		var tag []string
-		if len(t.Option.Tag) > 0 {
-			for tagKey, ok := range t.Option.Tag {
-				if cast.ToBool(ok) {
-					tag = append(tag, fmt.Sprintf(`%s:"%s"`, tagKey, t.getColumnByStyle(item.Name)))
-				}
+		if len(tagField) > 0 {
+			for _, field := range tagField {
+				tag = append(tag, fmt.Sprintf(`%s:"%s"`, field, t.getColumnByStyle(item.Name)))
 			}
 		}
 		if t.Option.IsGorm {
