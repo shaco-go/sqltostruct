@@ -1,6 +1,7 @@
 package core
 
 import (
+	_ "embed"
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
@@ -8,8 +9,6 @@ import (
 	"github.com/shaco-go/sqltostruct/internal/repo"
 	"github.com/spf13/cast"
 	"go/format"
-	"os"
-	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -17,6 +16,9 @@ import (
 var (
 	optionRepo = repo.NewOption()
 )
+
+//go:embed template
+var templateStr string
 
 type Template struct {
 	Table   *Table
@@ -89,15 +91,13 @@ func (t *Template) build() {
 }
 
 func (t *Template) Generate() (string, error) {
-	dir, _ := os.Getwd()
-	filePath := dir + "/template"
-	files, err := template.New(filepath.Base(filePath)).Funcs(map[string]any{
+	files, err := template.New("template").Funcs(map[string]any{
 		"pascalCase": lo.PascalCase,
 		"getWord": func(word string) string {
 			var a = []rune(word)
 			return string(a[0])
 		},
-	}).ParseFiles(filePath)
+	}).Parse(templateStr)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
