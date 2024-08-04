@@ -1,91 +1,21 @@
 package main
 
 import (
-	"embed"
-	"flag"
+	_ "embed"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/shaco-go/sqltostruct/global"
-	"github.com/shaco-go/sqltostruct/internal/core"
-	"github.com/shaco-go/sqltostruct/internal/initialization"
-	"github.com/shaco-go/sqltostruct/internal/middleare"
-	"github.com/shaco-go/sqltostruct/internal/repo"
-	"github.com/shaco-go/sqltostruct/internal/request"
-	"github.com/shaco-go/sqltostruct/internal/response"
-	"net/http"
+	"github.com/shaco-go/sqltostruct/internal/ddlparse"
+	"github.com/shaco-go/sqltostruct/internal/ddlparse/conf"
 )
 
-var (
-	optionRepo = repo.NewOption()
-)
-
-//go:embed ui/dist
-var f embed.FS
+//go:embed model
+var model string
 
 func main() {
-	port := flag.String("p", "7788", "port to listen on")
-	flag.Parse()
-	// init db
-	global.DB = initialization.NewGorm()
-
-	// router
-	gin.SetMode(gin.ReleaseMode)
-	e := gin.Default()
-	e.Use(middleare.CORS())
-	e.Use(middleare.Serve("/", middleare.EmbedFolder(f, "ui/dist")))
-	e.NoRoute(func(c *gin.Context) {
-		data, err := f.ReadFile("ui/dist/index.html")
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
-	})
-
-	api := e.Group("api")
-	{
-		api.GET("config", func(c *gin.Context) {
-			data := optionRepo.Get()
-			response.OkWithData(data, c)
-		})
-		api.PATCH("config", func(c *gin.Context) {
-			var req request.OptionSaveReq
-			if err := c.ShouldBind(&req); err != nil {
-				response.FailWithMessage(err.Error(), c)
-				return
-			}
-			if err := optionRepo.Save(req); err != nil {
-				response.FailWithMessage(err.Error(), c)
-				return
-			}
-			response.Ok(c)
-		})
-		api.POST("generate", func(c *gin.Context) {
-			var req struct {
-				Sql string `json:"sql"`
-			}
-			err := c.ShouldBind(&req)
-			if err != nil {
-				response.FailWithMessage(err.Error(), c)
-				return
-			}
-			t, err := core.NewTemplate(req.Sql)
-			if err != nil {
-				response.FailWithMessage(err.Error(), c)
-				return
-			}
-			code, err := t.Generate()
-			if err != nil {
-				response.FailWithMessage(err.Error(), c)
-				return
-			}
-			fmt.Println(code)
-			response.OkWithData(gin.H{
-				"code": code,
-			}, c)
-		})
+	config := conf.NewDefConf()
+	app := ddlparse.NewApp(config)
+	tmp, err := app.Build(model)
+	if err != nil {
+		panic(err)
 	}
-
-	fmt.Println("click href: http://localhost:" + *port)
-	panic(e.Run(":" + *port))
+	fmt.Println(tmp)
 }

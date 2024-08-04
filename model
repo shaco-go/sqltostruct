@@ -1,0 +1,30 @@
+-- auto-generated definition
+create table eb_financial
+(
+    financial_id      int unsigned auto_increment
+        primary key,
+    financial_sn      varchar(32)                                       not null comment '单号',
+    mer_money         decimal(12, 2) unsigned                           not null comment '余额',
+    extract_money     decimal(12, 2) unsigned default 0.00              not null comment '提现金额',
+    financial_type    int(11) unsigned        default 0                 null comment '收款类型',
+    financial_account varchar(500)                                      not null comment '商户账户信息',
+    financial_status  int(11) unsigned        default 0                 null comment '转账状态',
+    status            int(10)                                           not null comment '审核0待审核，1通过 ，-1 未通过',
+    refusal           varchar(32)                                       null comment '拒绝理由',
+    mer_id            int(11) unsigned                                  not null comment '商户 id',
+    image             varchar(1000)                                     null comment '凭证',
+    admin_id          int                                               null,
+    create_time       timestamp               default CURRENT_TIMESTAMP null comment '创建时间',
+    status_time       timestamp                                         null comment '审核时间',
+    update_time       timestamp                                         null comment '修改拼凭证时间',
+    is_del            int(11) unsigned        default 0                 null,
+    mark              varchar(255)                                      null comment '商户备注',
+    admin_mark        varchar(255)                                      null comment '平台备注',
+    mer_admin_id      int                                               null comment '商户管理员',
+    type              int(11) unsigned        default 0                 null comment '申请类型 0.余额 1 保证金'
+)
+    comment '商户财务申请提现' charset = utf8
+                               row_format = DYNAMIC;
+
+create index mer_id
+    on eb_financial (mer_id);
