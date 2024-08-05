@@ -1,6 +1,6 @@
 <script setup>
 import {NButton, NDynamicInput, NFlex, NModal, NScrollbar, NSpin} from "naive-ui"
-import {defineModel, ref, watch} from "vue"
+import {ref, watch} from "vue"
 import {syncFuncLoad} from "@/utils.js"
 import axios from "axios";
 
@@ -40,7 +40,7 @@ watch(show, (newVal) => {
 </script>
 
 <template>
-  <n-modal title="字段映射设置" style="width: 80vw;" v-model:show="show" transform-origin="center" preset="card">
+  <n-modal title="配置" style="width: 80vw;" v-model:show="show" transform-origin="center" preset="card">
     <n-spin :show="load">
       <n-scrollbar style="height: 70vh;padding: 0 20px 0 0 ">
         <n-dynamic-input
