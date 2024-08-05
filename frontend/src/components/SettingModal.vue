@@ -1,12 +1,20 @@
 <script setup>
-import {NButton, NDynamicInput, NFlex, NModal, NScrollbar, NSpin} from "naive-ui"
+import {NButton, NCheckbox, NDynamicInput, NFlex, NIcon, NModal, NScrollbar, NSpin} from "naive-ui"
 import {ref, watch} from "vue"
 import {syncFuncLoad} from "@/utils.js"
 import axios from "axios";
+import IconConf1 from "@/components/icons/IconConf1.vue";
+import TagsModal from "@/components/TagsModal.vue";
 
 
 const show = defineModel()
+const tagsShow = ref(false)
 const mapping = ref([])
+const tags = ref([
+  {name: "gorm", enable: true, is_default: true},
+  {name: "form", enable: false, is_default: true},
+  {name: "json", enable: true, is_default: true},
+])
 const load = ref(false)
 
 // 获取配置
@@ -41,8 +49,20 @@ watch(show, (newVal) => {
 
 <template>
   <n-modal title="配置" style="width: 80vw;" v-model:show="show" transform-origin="center" preset="card">
+    <TagsModal v-model="tagsShow"/>
     <n-spin :show="load">
       <n-scrollbar style="height: 70vh;padding: 0 20px 0 0 ">
+        <n-flex class="mb-5" align="center">
+          <n-checkbox v-for="item in tags" v-model:checked="item.enable" :label="item.name"/>
+          <n-button quaternary circle type="primary" @click="tagsShow = true">
+            <template #icon>
+              <n-icon size="18px">
+                <IconConf1/>
+              </n-icon>
+            </template>
+          </n-button>
+
+        </n-flex>
         <n-dynamic-input
             v-model:value="mapping"
             preset="pair"

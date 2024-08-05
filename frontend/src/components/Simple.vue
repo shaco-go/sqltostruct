@@ -11,7 +11,6 @@ const resetRows = () => {
   let height = scrollContentRef.value?.scrollbarInstRef?.yBarSizePx
   if (height !== undefined) {
     minRows.value = Math.floor((parseInt(height) - 13) / 25.6)
-    console.log(height, minRows.value)
   }
 }
 
